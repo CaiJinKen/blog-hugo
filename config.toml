@@ -1,0 +1,13 @@
+baseURL = "https://caijinken.github.io/"
+languageCode = "en-us"
+title = "*<^_^>*"
+
+contentdir = "content"
+layoutdir = "layouts"
+publishdir = "public"
+builddrafts = false
+theme = "hyde"
+
+[params]
+    description = "CaiJin`s site"
+    author = "Cai Jin"
