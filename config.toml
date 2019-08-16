@@ -5,7 +5,7 @@ title = "*<^_^>*"
 contentdir = "content"
 layoutdir = "layouts"
 publishdir = "public"
-builddrafts = false
+builddrafts = false 
 theme = "hyde"
 
 [params]

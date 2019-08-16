@@ -2,6 +2,7 @@
 title: "Arch_install"
 date: 2019-07-13T22:24:48+08:00
 draft: false 
+tags: ["linux"]
 ---
 #### 使用*nux 制作U盘启动盘
 ```bash
