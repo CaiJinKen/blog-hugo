@@ -13,7 +13,7 @@ mkdir public
 git worktree prune
 rm -rf .git/worktrees/public/
 
-echo "Checking out GitHub.io master branch into public"
+echo "Checking out gh-pages master branch into public"
 git worktree add -B master public git@github.com:CaiJinKen/CaiJinKen.github.io.git/master
 
 echo "Removing existing files"
