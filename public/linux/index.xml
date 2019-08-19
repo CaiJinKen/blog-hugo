@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linuxes on *&lt;^_^&gt;*</title>
+    <link>https://caijinken.github.io/linux/</link>
+    <description>Recent content in Linuxes on *&lt;^_^&gt;*</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 16 Aug 2019 21:03:23 +0800</lastBuildDate>
+    
+	<atom:link href="https://caijinken.github.io/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Namespace_Improve</title>
+      <link>https://caijinken.github.io/linux/namespace_improve/</link>
+      <pubDate>Fri, 16 Aug 2019 21:03:23 +0800</pubDate>
+      
+      <guid>https://caijinken.github.io/linux/namespace_improve/</guid>
+      <description>在上一篇namespace的文章中，我们了解并通过程序写了一个简单版的容器，体验了Linux namespace的功能，但是还有两个美中不足的地方，一个是需要使用root权限才能够运行我们的程序，另外一个我们在容器中使用ps看到pid为1的进程是/proc/self/exe child sh，而不是sh。所以这篇文章就讲讲如何解决这两个问题。
+root权限 在Linux namespace中，只有user namespace 是可以被普通用户创建的，其他的namespace 都需要有root权限才可以。但这样就会有问题：
+1、并不是每个用户都有sudo权限；
+2、进程的安全性。
+其实第一点还好解决，关键是第二点，运行的进程是以root权限运行的，这就有可能导致安全问题，比如，容器内的进程受到攻击，控制权到了攻击者的手中，此时的进程是用root权限运行的，所以攻击者可以用该进程执行任意权限的操作。
+也有人可能会想，我们不是已经把所有的namespace都clone出来了么，rootfs也改变了，即使被攻击了，影响的范围也就是container中。说的是没错，不过，如果我们把主机的目录当作卷挂载到了container中，那么攻击者所能影响的范围就扩大到了主机中。所以，我们就把这个影响减少到最少&amp;mdash;当前用户的权限。看看代码：
+uid := os.Getuid() gid := os.Getgid() cmd.SysProcAttr = &amp;amp;syscall.SysProcAttr{ Cloneflags: syscall.CLONE_NEWUSER | syscall.CLONE_NEWUTS | syscall.CLONE_NEWNS | syscall.CLONE_NEWIPC | syscall.CLONE_NEWNET | syscall.CLONE_NEWPID, UidMappings: []syscall.SysProcIDMap{{0, uid, 1}}, GidMappings: []syscall.SysProcIDMap{{0, gid, 1}}, Credential: &amp;amp;syscall.Credential{ Uid: 0, Gid: 0, }, }  第一行和第二行得到当前登陆用户的uid/gid (user id/ group id)；
+第六行，我们做了一个uid的映射，syscall.SysProcIDMap第一个参数是容器内的用户的id，0是root，第二个参数是需要映射的用户的权限，第三个参数是映射范围，一般用1就可以，表示一一对应；第七行也是一样，只不过是gid的映射；
+第8行，设置容器内用户的uid和gid，都为0，说明是用户是root，用户所在的组是root组
+重新编译运行：
+jin@k53:~/go-test$ go build namespace.go jin@k53:~/go-test$ ./namespace run sh p pid: 4342 c p pid: 0 c pid: 1 / # / #  可以看到现在不用root权限就可以运行了。docker 也不需要root权限就能运行呢，向docker又前进了一小步，而且，容器内是root，容器外，sh其实是以普通用户执行的，安全性又得到了保证。其实这种安全性是很粗糙的，关于容器的安全性，是一个比较有意思的话题，后面也许会单独谈谈。</description>
+    </item>
+    
+    <item>
+      <title>Namespace</title>
+      <link>https://caijinken.github.io/linux/namespace/</link>
+      <pubDate>Wed, 14 Aug 2019 19:33:19 +0800</pubDate>
+      
+      <guid>https://caijinken.github.io/linux/namespace/</guid>
+      <description>简介 linux namespace 是linux内核提供的一种环境（资源）隔离的方式，主要提供了UTS、IPC、network、User、mount、PID的隔离
+   类别 系统调用参数 内核版本 作用     UTS CLONE_NEWUTS Linux 2.6.19 隔离主机名称，域名称   IPC CLONE_NEWIPC Linux 2.6.10 隔离进程间通信   Network CLONE_NEWNET Linux 2.6.29 隔离网络   User CLONE_NEWUSER Linux 3.8 隔离用户   Mount CLONE_NEWNS Linux 2.4.19 隔离挂载点   PID CLONE_NEWPID linux 2.6.24 隔离进程ID    UTC 未隔离之前，我们先看看主机名，打开两个终端，终端1执行hostname，查看当前主机名，第二个终端中执行sudo hostname xxx再在终端1中执行hostname，可以发现主机名称已经被修改了。
+为了能够更好的感受下namespace，自己动手写个程序是最好不过的方式了，下面是我写的一个demo，文件名是namespace.go
+package main import ( &amp;quot;fmt&amp;quot; &amp;quot;os&amp;quot; &amp;quot;os/exec&amp;quot; &amp;quot;syscall&amp;quot; ) func main() { cmd := exec.</description>
+    </item>
+    
+    <item>
+      <title>Arch_install</title>
+      <link>https://caijinken.github.io/linux/arch_install/</link>
+      <pubDate>Sat, 13 Jul 2019 22:24:48 +0800</pubDate>
+      
+      <guid>https://caijinken.github.io/linux/arch_install/</guid>
+      <description>使用*nux 制作U盘启动盘 fdisk -l #查看当前系统中的磁盘设备，这里u盘设备是/dev/disk2 umount /dev/disk2 #卸载挂载点，备份u盘里面的重要文件，制作启动盘会执行格式化 sudo dd if=archlinux-2019.07.01-x86_64.iso of=/dev/disk2 bs=1m #这用时可能会比较久，稍等一下  准备 制作好u盘启动盘之后，设置电脑从u盘启动，之后进入到arch live里默认以root用户登录，之后就可以进行准备操作了。
+vim /etc/hostname #修改安装后的主机名 fdisk /dev/sda #分区，注意设备，我这里是sda mkfs.ext4 /dev/sda1 #格式化分区 mount /dev/sda1 /mnt #挂载分区 vim /etc/pacman.d/mirrorlist #将中国区的源放到非注释的第一行，会提高软件包的下载速度，越靠前，优先级越高。 pacman -Syy #更新镜像源 dhcpcd #使用dhcp自动获取ip地址 ip addr show #应该能够看到分配到ip地址了，如果使用的wifi，并且加密方式是wpa，则执行以下命令，连接wifi wpa_supplicant -i wpl3s0 -c &amp;lt;(wpa_passphrase wifi-ssid password) #wpl3s0 wifi-ssid password 分别是无线网卡名称，wifi名称，wifi密码  安装 pacstrap /mnt base base-devel #开始安装到mnt，一路回车就好，稍等直到完成。 arch-chroot /mnt #改变root目录 vim /etc/locale.gen #删除en_US.UTF-8 和 zh_CN.UTF-8 前面的注释 locale-gen #生成语言区域的一些文件 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime #设置时区为亚洲上海的时区(+08:00)  安装引导程序GRUB pacmanm -S os-prober grub #安装grub及依赖 grub-install --target=i386-pc /dev/sda #BIOS方式 grub-install /dev/sda #EFI方式 grub-mkconfig -o /boot/grub/grub.</description>
+    </item>
+    
+  </channel>
+</rss>
