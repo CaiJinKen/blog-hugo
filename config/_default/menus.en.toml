@@ -1,0 +1,17 @@
+[[main]]
+name = 'Archives'
+pageRef = '/archives'
+weight = 10
+[[main]]
+name = 'Categories'
+pageRef = '/categories'
+weight = 20
+[[main]]
+name = 'Tags'
+pageRef = '/tags'
+weight = 30
+[[main]]
+name = 'github'
+pre = '<i class="fa fa-heart" style="color:red"></i>'
+url = 'https://github.com/CaiJinKen'
+weight = 40

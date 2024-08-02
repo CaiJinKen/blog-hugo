@@ -1,0 +1,17 @@
+[[main]]
+name = '文档'
+pageRef = '/archives'
+weight = 10
+[[main]]
+name = '分类'
+pageRef = '/categories'
+weight = 20
+[[main]]
+name = '标签'
+pageRef = '/tags'
+weight = 30
+[[main]]
+name = 'github'
+pre = '<i class="fa fa-heart" style="color:red"></i>'
+url = 'https://github.com/CaiJinKen'
+weight = 40
