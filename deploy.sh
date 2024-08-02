@@ -8,7 +8,7 @@ set -e
 printf "\033[0;32mDeploying updates to GitHub...\033[0m\n"
 
 # Build the project.
-hugo -t hyde # if using a theme, replace with `hugo -t <YOURTHEME>`
+hugo --minify # if using a theme, replace with `hugo -t <YOURTHEME>`
 
 # Go To Public folder
 cd public
@@ -21,7 +21,7 @@ msg="rebuilding site $(date)"
 if [ -n "$*" ]; then
 	msg="$*"
 fi
-git commit -m "$msg"
+git commit -S -m "$msg"
 
 # Push source and build repos.
 git push origin master
